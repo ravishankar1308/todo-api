@@ -30,11 +30,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
               expiresIn: maxAge,
             }
           );
-          res.cookie("token", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000,
-          });
-          Api.created(res, "User Register successfully");
+          Api.created(res, "User Register successfully", { token: token });
         })
         .catch((error: any) => {
           if (error.code === 11000) {
@@ -71,11 +67,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
               expiresIn: maxAge, // 3hrs in sec
             }
           );
-          res.cookie("token", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000,
-          });
-          Api.ok(res, "Login successfully");
+          Api.ok(res, "Login successfully", { token: token });
         } else {
           Api.badRequest(res, "Invalid Credential");
         }
