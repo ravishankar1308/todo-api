@@ -10,7 +10,7 @@ const verifyUser = (req: Request, res: Response, next: NextFunction) => {
       if (err) {
         return Api.unAuthorized(res, "Not authorized");
       } else {
-        if (decodedToken) {
+        if (!decodedToken) {
           return Api.unAuthorized(res, "Not authorized");
         } else {
           next();
