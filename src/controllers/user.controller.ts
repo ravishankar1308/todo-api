@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models";
 import Api from "../helpers/api";
-import dynamoose from "dynamoose";
 import { jwtSecret } from "../config/database";
 
 const register = async (req: Request, res: Response): Promise<void> => {
@@ -78,7 +77,26 @@ const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const token = req.headers.authorization || "";
+    const { id, username }: any = jwt.decode(token);
+    if (id) {
+      await Api.success(res, "Profile detail fetch successfully", {
+        id,
+        username,
+      });
+    } else {
+      Api.badRequest(res, "Profile detail Get Fail");
+    }
+  } catch (error: any) {
+    console.log("basd");
+    Api.badRequest(res, error);
+  }
+};
+
 export default {
   register,
   login,
+  getProfile,
 };

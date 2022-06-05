@@ -1,14 +1,12 @@
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt, { decode } from "jsonwebtoken";
-import { User, Todo } from "../models";
+import jwt from "jsonwebtoken";
+import { Todo } from "../models";
 import Api from "../helpers/api";
-import { jwtSecret } from "../config/database";
 
 const createTodo = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title } = req.body;
-    const { token } = req.cookies;
+    const token = req.headers.authorization || "";
     if (!title) {
       return Api.badRequest(res, "title required");
     }
@@ -40,9 +38,14 @@ const createTodo = async (req: Request, res: Response): Promise<void> => {
 
 const getTodoByUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token } = req.cookies;
+    const token = req.headers.authorization || "";
     const { id }: any = jwt.decode(token);
-    const TodoListByUser = await Todo.find().where("Author").equals(id);
+    const { status } = req.query;
+    const TodoListByUser = await Todo.find()
+      .where("Author")
+      .equals(id)
+      .where("status")
+      .equals(status);
     if (TodoListByUser) {
       await Api.success(res, "ToDo List Get Successfully", TodoListByUser);
     } else {
@@ -55,17 +58,13 @@ const getTodoByUser = async (req: Request, res: Response): Promise<void> => {
 
 const updateTodoStatus = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const { title } = req.body;
 
   if (!id) {
     return Api.badRequest(res, "id not found");
   }
-  if (!title) {
-    return Api.badRequest(res, "title required");
-  }
 
   try {
-    Todo.findByIdAndUpdate(id, { title }, { new: true }).then((result: any) => {
+    Todo.findByIdAndUpdate(id, req.body, { new: true }).then((result: any) => {
       Api.created(res, "Todo update successfully", result);
     });
   } catch (error: any) {

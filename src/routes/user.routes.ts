@@ -18,4 +18,6 @@ export const UserRoute = (app: any) => {
   app.post("/api/login", user.login);
 
   app.post("/api/register", user.register);
+
+  app.get("/api/profile", user.getProfile);
 };
