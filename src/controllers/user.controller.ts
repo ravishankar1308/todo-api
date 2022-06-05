@@ -22,13 +22,9 @@ const register = async (req: Request, res: Response): Promise<void> => {
       })
         .then((user: { _id: any; role: any }) => {
           const maxAge = 3 * 60 * 60;
-          const token = jwt.sign(
-            { id: user._id, username, role: user.role },
-            jwtSecret,
-            {
-              expiresIn: maxAge,
-            }
-          );
+          const token = jwt.sign({ id: user._id, username }, jwtSecret, {
+            expiresIn: maxAge,
+          });
           Api.created(res, "User Register successfully", { token: token });
         })
         .catch((error: any) => {
@@ -59,13 +55,9 @@ const login = async (req: Request, res: Response): Promise<void> => {
       bcrypt.compare(password, user.password).then(function (result) {
         if (result) {
           const maxAge = 3 * 60 * 60;
-          const token = jwt.sign(
-            { id: user._id, username, role: user.role },
-            jwtSecret,
-            {
-              expiresIn: maxAge, // 3hrs in sec
-            }
-          );
+          const token = jwt.sign({ id: user._id, username }, jwtSecret, {
+            expiresIn: maxAge,
+          });
           Api.ok(res, "Login successfully", { token: token });
         } else {
           Api.badRequest(res, "Invalid Credential");

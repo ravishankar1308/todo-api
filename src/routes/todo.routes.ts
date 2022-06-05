@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import todo from "../controllers/todo.controller";
+// @ts-ignore
+import verifyUser from "../middleware/verifyUser";
 
 export const TodoRoute = (app: any) => {
   app.use(function (req: Request, res: Response, next: NextFunction) {
@@ -15,11 +17,11 @@ export const TodoRoute = (app: any) => {
     next();
   });
 
-  app.post("/api/todo/create", todo.createTodo);
+  app.post("/api/todo/create", verifyUser, todo.createTodo);
 
-  app.get("/api/user/todo", todo.getTodoByUser);
+  app.get("/api/user/todo", verifyUser, todo.getTodoByUser);
 
-  app.patch("/api/todo/:id", todo.updateTodoStatus);
+  app.patch("/api/todo/:id", verifyUser, todo.updateTodoStatus);
 
-  app.delete("/api/todo/:id", todo.deleteTodo);
+  app.delete("/api/todo/:id", verifyUser, todo.deleteTodo);
 };
