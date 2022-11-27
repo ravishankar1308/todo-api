@@ -18,3 +18,4 @@ yarn dev
 Please configure the env if need change
 
 To check service work go to http://localhost:5000/  it's response success message
+"# aiyamiddun-api" 
